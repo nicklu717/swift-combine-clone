@@ -7,10 +7,10 @@
 
 import Foundation
 
-class PassthroughSubject<Output>: Subject {
-    private var subscriptions: [UUID: Subscription<Output>] = [:]
+class PassthroughSubject<Output, Failure>: Subject where Failure: Error {
+    private var subscriptions: [UUID: Subscription<Output, Failure>] = [:]
     
-    func sink(receiveValue: @escaping (Output) -> Void, receiveCompletion: @escaping (Completion) -> Void) -> Cancellable {
+    func sink(receiveValue: @escaping (Output) -> Void, receiveCompletion: @escaping (Completion<Failure>) -> Void) -> Cancellable {
         let id = UUID()
         let subscription = Subscription(
             receiveValue: receiveValue,
@@ -29,7 +29,7 @@ class PassthroughSubject<Output>: Subject {
         }
     }
     
-    func send(completion: Completion) {
+    func send(completion: Completion<Failure>) {
         subscriptions.forEach { _, subscription in
             subscription.complete(completion)
         }

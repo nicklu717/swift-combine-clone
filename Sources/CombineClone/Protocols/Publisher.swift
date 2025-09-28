@@ -7,12 +7,14 @@
 
 protocol Publisher {
     associatedtype Output
+    associatedtype Failure: Error
     
-    func sink(receiveValue: @escaping (Output) -> Void, receiveCompletion: @escaping (Completion) -> Void) -> Cancellable
+    func sink(receiveValue: @escaping (Output) -> Void, receiveCompletion: @escaping (Completion<Failure>) -> Void) -> Cancellable
 }
 
-enum Completion {
+enum Completion<Failure> where Failure: Error {
     case finished
+    case failure(Failure)
 }
 
 protocol Cancellable {

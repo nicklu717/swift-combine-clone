@@ -6,6 +6,8 @@
 //
 
 struct Just<Output>: Publisher {
+    typealias Failure = Never
+    
     private let value: Output
     
     init(_ value: Output) {
@@ -13,7 +15,7 @@ struct Just<Output>: Publisher {
     }
     
     @discardableResult
-    func sink(receiveValue: @escaping (Output) -> Void, receiveCompletion: @escaping (Completion) -> Void = { _ in }) -> Cancellable {
+    func sink(receiveValue: @escaping (Output) -> Void, receiveCompletion: @escaping (Completion<Failure>) -> Void = { _ in }) -> Cancellable {
         receiveValue(value)
         return Subscription(receiveValue: receiveValue, receiveCompletion: receiveCompletion, receiveCancel: {})
     }

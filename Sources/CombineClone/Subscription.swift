@@ -5,16 +5,16 @@
 //  Created by 陸瑋恩 on 2025/9/28.
 //
 
-class Subscription<Output> {
+class Subscription<Output, Failure> where Failure: Error {
     private let receiveValue: (Output) -> Void
-    private let receiveCompletion: (Completion) -> Void
+    private let receiveCompletion: (Completion<Failure>) -> Void
     private let receiveCancel: () -> Void
     
     private var state: State = .valid
     
     init(
         receiveValue: @escaping (Output) -> Void,
-        receiveCompletion: @escaping (Completion) -> Void,
+        receiveCompletion: @escaping (Completion<Failure>) -> Void,
         receiveCancel: @escaping () -> Void
     ) {
         self.receiveValue = receiveValue
@@ -27,7 +27,7 @@ class Subscription<Output> {
         receiveValue(value)
     }
     
-    func complete(_ completion: Completion) {
+    func complete(_ completion: Completion<Failure>) {
         guard state.isValid else { return }
         state = .completed
         receiveCompletion(completion)

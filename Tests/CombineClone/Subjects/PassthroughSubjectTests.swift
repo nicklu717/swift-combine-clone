@@ -6,6 +6,7 @@
 //
 
 import Testing
+import Foundation
 
 @testable import CombineClone
 
@@ -15,7 +16,7 @@ struct PassthroughSubjectTests {
     @Test
     func sinkAndSend() {
         var output: [Int] = []
-        let subject = PassthroughSubject<Int>()
+        let subject = PassthroughSubject<Int, Never>()
         _ = subject
             .sink(
                 receiveValue: { _output in
@@ -36,7 +37,7 @@ struct PassthroughSubjectTests {
     func multipleSinkAndSend() {
         var output1: [Int] = []
         var output2: [Int] = []
-        let subject = PassthroughSubject<Int>()
+        let subject = PassthroughSubject<Int, Never>()
         _ = subject
             .sink(
                 receiveValue: { _output in
@@ -69,7 +70,7 @@ struct PassthroughSubjectTests {
     @Test
     func finish() {
         var output: [Int] = []
-        let subject = PassthroughSubject<Int>()
+        let subject = PassthroughSubject<Int, Never>()
         _ = subject
             .sink(
                 receiveValue: { _output in
@@ -88,9 +89,30 @@ struct PassthroughSubjectTests {
     }
     
     @Test
+    func failure() {
+        var output: [Int] = []
+        let subject = PassthroughSubject<Int, Error>()
+        _ = subject
+            .sink(
+                receiveValue: { _output in
+                    output.append(_output)
+                },
+                receiveCompletion: { _ in }
+            )
+        #expect(output == [])
+        
+        subject.send(1)
+        #expect(output == [1])
+        
+        subject.send(completion: .failure(NSError(domain: "", code: 0)))
+        subject.send(2)
+        #expect(output == [1])
+    }
+    
+    @Test
     func cancel() {
         var output: [Int] = []
-        let subject = PassthroughSubject<Int>()
+        let subject = PassthroughSubject<Int, Never>()
         let cancellable = subject
             .sink(
                 receiveValue: { _output in

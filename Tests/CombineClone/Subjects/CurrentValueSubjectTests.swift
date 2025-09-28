@@ -6,6 +6,7 @@
 //
 
 import Testing
+import Foundation
 
 @testable import CombineClone
 
@@ -15,7 +16,7 @@ struct CurrentValueSubjectTests {
     @Test
     func sinkAndSend() {
         var output: [Int] = []
-        let subject = CurrentValueSubject<Int>(0)
+        let subject = CurrentValueSubject<Int, Never>(0)
         _ = subject
             .sink(
                 receiveValue: { _output in
@@ -39,7 +40,7 @@ struct CurrentValueSubjectTests {
     func multipleSinkAndSend() {
         var output1: [Int] = []
         var output2: [Int] = []
-        let subject = CurrentValueSubject<Int>(0)
+        let subject = CurrentValueSubject<Int, Never>(0)
         _ = subject
             .sink(
                 receiveValue: { _output in
@@ -98,9 +99,33 @@ struct CurrentValueSubjectTests {
     }
     
     @Test
+    func failure() {
+        var output: [Int] = []
+        let subject = CurrentValueSubject<Int, Error>(0)
+        _ = subject
+            .sink(
+                receiveValue: { _output in
+                    output.append(_output)
+                },
+                receiveCompletion: { _ in }
+            )
+        #expect(output == [])
+        #expect(subject.value == 0)
+        
+        subject.send(1)
+        #expect(output == [1])
+        #expect(subject.value == 1)
+        
+        subject.send(completion: .failure(NSError(domain: "", code: 0)))
+        subject.send(2)
+        #expect(output == [1])
+        #expect(subject.value == 2)
+    }
+    
+    @Test
     func cancel() {
         var output: [Int] = []
-        let subject = CurrentValueSubject<Int>(0)
+        let subject = CurrentValueSubject<Int, Never>(0)
         let cancellable = subject
             .sink(
                 receiveValue: { _output in

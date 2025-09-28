@@ -7,5 +7,5 @@
 
 protocol Subject: Publisher {
     func send(_ value: Output)
-    func send(completion: Completion)
+    func send(completion: Completion<Failure>)
 }
