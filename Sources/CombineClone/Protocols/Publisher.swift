@@ -8,7 +8,7 @@
 protocol Publisher {
     associatedtype Output
     
-    func sink(receiveValue: @escaping (Output) -> Void) -> Cancellable
+    func sink(receiveValue: @escaping (Output) -> Void, receiveFinished: @escaping () -> Void) -> Cancellable
 }
 
 protocol Cancellable {

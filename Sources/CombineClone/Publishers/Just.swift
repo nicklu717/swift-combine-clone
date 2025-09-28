@@ -13,8 +13,8 @@ struct Just<Output>: Publisher {
     }
     
     @discardableResult
-    func sink(receiveValue: @escaping (Output) -> Void) -> Cancellable {
+    func sink(receiveValue: @escaping (Output) -> Void, receiveFinished: @escaping () -> Void = {}) -> Cancellable {
         receiveValue(value)
-        return Subscription(receiveValue: receiveValue, receiveCancel: {})
+        return Subscription(receiveValue: receiveValue, receiveFinished: receiveFinished, receiveCancel: {})
     }
 }

@@ -6,14 +6,43 @@
 //
 
 class Subscription<Output> {
-    let receiveValue: (Output) -> Void
-    let receiveCancel: () -> Void
+    private let receiveValue: (Output) -> Void
+    private let receiveFinished: () -> Void
+    private let receiveCancel: () -> Void
     
-    private var isCancelled = false
+    private var state: State = .valid
     
-    init(receiveValue: @escaping (Output) -> Void, receiveCancel: @escaping () -> Void) {
+    init(
+        receiveValue: @escaping (Output) -> Void,
+        receiveFinished: @escaping () -> Void,
+        receiveCancel: @escaping () -> Void
+    ) {
         self.receiveValue = receiveValue
+        self.receiveFinished = receiveFinished
         self.receiveCancel = receiveCancel
+    }
+    
+    func send(_ value: Output) {
+        guard state.isValid else { return }
+        receiveValue(value)
+    }
+    
+    func finish() {
+        guard state.isValid else { return }
+        state = .finished
+        receiveFinished()
+    }
+}
+
+// MARK: - State
+extension Subscription {
+    
+    enum State {
+        case valid, finished, cancelled
+        
+        var isValid: Bool {
+            return self == .valid
+        }
     }
 }
 
@@ -21,8 +50,8 @@ class Subscription<Output> {
 extension Subscription: Cancellable {
     
     func cancel() {
-        guard !isCancelled else { return }
-        isCancelled = true
+        guard state.isValid else { return }
+        state = .cancelled
         receiveCancel()
     }
 }

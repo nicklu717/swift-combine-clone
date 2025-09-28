@@ -16,9 +16,13 @@ struct PassthroughSubjectTests {
     func sinkAndSend() {
         var output: [Int] = []
         let subject = PassthroughSubject<Int>()
-        _ = subject.sink { _output in
-            output.append(_output)
-        }
+        _ = subject
+            .sink(
+                receiveValue: { _output in
+                    output.append(_output)
+                },
+                receiveFinished: {}
+            )
         #expect(output == [])
         
         subject.send(1)
@@ -33,9 +37,13 @@ struct PassthroughSubjectTests {
         var output1: [Int] = []
         var output2: [Int] = []
         let subject = PassthroughSubject<Int>()
-        _ = subject.sink { _output in
-            output1.append(_output)
-        }
+        _ = subject
+            .sink(
+                receiveValue: { _output in
+                    output1.append(_output)
+                },
+                receiveFinished: {}
+            )
         #expect(output1 == [])
         #expect(output2 == [])
         
@@ -43,9 +51,13 @@ struct PassthroughSubjectTests {
         #expect(output1 == [1])
         #expect(output2 == [])
         
-        _ = subject.sink { _output in
-            output2.append(_output)
-        }
+        _ = subject
+            .sink(
+                receiveValue: { _output in
+                    output2.append(_output)
+                },
+                receiveFinished: {}
+            )
         #expect(output1 == [1])
         #expect(output2 == [])
         
@@ -55,12 +67,37 @@ struct PassthroughSubjectTests {
     }
     
     @Test
+    func finish() {
+        var output: [Int] = []
+        let subject = PassthroughSubject<Int>()
+        _ = subject
+            .sink(
+                receiveValue: { _output in
+                    output.append(_output)
+                },
+                receiveFinished: {}
+            )
+        #expect(output == [])
+        
+        subject.send(1)
+        #expect(output == [1])
+        
+        subject.sendFinished()
+        subject.send(2)
+        #expect(output == [1])
+    }
+    
+    @Test
     func cancel() {
         var output: [Int] = []
         let subject = PassthroughSubject<Int>()
-        let cancellable = subject.sink { _output in
-            output.append(_output)
-        }
+        let cancellable = subject
+            .sink(
+                receiveValue: { _output in
+                    output.append(_output)
+                },
+                receiveFinished: {}
+            )
         #expect(output == [])
         
         subject.send(1)
