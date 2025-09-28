@@ -8,5 +8,5 @@
 protocol Publisher {
     associatedtype Output
     
-    func sink(receiveValue: (Output) -> Void)
+    func sink(receiveValue: @escaping (Output) -> Void)
 }
