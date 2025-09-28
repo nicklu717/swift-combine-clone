@@ -16,7 +16,7 @@ struct PassthroughSubjectTests {
     func sinkAndSend() {
         var output: [Int] = []
         let subject = PassthroughSubject<Int>()
-        subject.sink { _output in
+        _ = subject.sink { _output in
             output.append(_output)
         }
         #expect(output == [])
@@ -33,7 +33,7 @@ struct PassthroughSubjectTests {
         var output1: [Int] = []
         var output2: [Int] = []
         let subject = PassthroughSubject<Int>()
-        subject.sink { _output in
+        _ = subject.sink { _output in
             output1.append(_output)
         }
         #expect(output1 == [])
@@ -43,7 +43,7 @@ struct PassthroughSubjectTests {
         #expect(output1 == [1])
         #expect(output2 == [])
         
-        subject.sink { _output in
+        _ = subject.sink { _output in
             output2.append(_output)
         }
         #expect(output1 == [1])
@@ -52,5 +52,22 @@ struct PassthroughSubjectTests {
         subject.send(2)
         #expect(output1 == [1, 2])
         #expect(output2 == [2])
+    }
+    
+    @Test
+    func cancel() {
+        var output: [Int] = []
+        let subject = PassthroughSubject<Int>()
+        let cancellable = subject.sink { _output in
+            output.append(_output)
+        }
+        #expect(output == [])
+        
+        subject.send(1)
+        #expect(output == [1])
+        
+        cancellable.cancel()
+        subject.send(2)
+        #expect(output == [1])
     }
 }

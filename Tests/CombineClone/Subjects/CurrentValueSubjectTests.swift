@@ -16,7 +16,7 @@ struct CurrentValueSubjectTests {
     func sinkAndSend() {
         var output: [Int] = []
         let subject = CurrentValueSubject<Int>(0)
-        subject.sink { _output in
+        _ = subject.sink { _output in
             output.append(_output)
         }
         #expect(output == [])
@@ -36,7 +36,7 @@ struct CurrentValueSubjectTests {
         var output1: [Int] = []
         var output2: [Int] = []
         let subject = CurrentValueSubject<Int>(0)
-        subject.sink { _output in
+        _ = subject.sink { _output in
             output1.append(_output)
         }
         #expect(output1 == [])
@@ -48,7 +48,7 @@ struct CurrentValueSubjectTests {
         #expect(output2 == [])
         #expect(subject.value == 1)
         
-        subject.sink { _output in
+        _ = subject.sink { _output in
             output2.append(_output)
         }
         #expect(output1 == [1])
@@ -58,6 +58,27 @@ struct CurrentValueSubjectTests {
         subject.send(2)
         #expect(output1 == [1, 2])
         #expect(output2 == [2])
+        #expect(subject.value == 2)
+    }
+    
+    @Test
+    func cancel() {
+        var output: [Int] = []
+        let subject = CurrentValueSubject<Int>(0)
+        let cancellable = subject.sink { _output in
+            output.append(_output)
+        }
+        #expect(output == [])
+        #expect(subject.value == 0)
+        
+        subject.send(1)
+        #expect(output == [1])
+        #expect(subject.value == 1)
+        
+        cancellable.cancel()
+        
+        subject.send(2)
+        #expect(output == [1])
         #expect(subject.value == 2)
     }
 }
