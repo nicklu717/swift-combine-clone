@@ -5,18 +5,18 @@
 //  Created by 陸瑋恩 on 2025/9/27.
 //
 
-protocol Publisher {
+public protocol Publisher {
     associatedtype Output
     associatedtype Failure: Error
     
     func sink(receiveValue: @escaping (Output) -> Void, receiveCompletion: @escaping (Completion<Failure>) -> Void) -> Cancellable
 }
 
-enum Completion<Failure> where Failure: Error {
+public enum Completion<Failure> where Failure: Error {
     case finished
     case failure(Failure)
 }
 
-protocol Cancellable {
+public protocol Cancellable {
     func cancel()
 }
