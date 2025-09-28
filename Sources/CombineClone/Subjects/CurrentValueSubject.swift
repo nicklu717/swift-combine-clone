@@ -8,18 +8,18 @@
 class CurrentValueSubject<Output>: Subject {
     private(set) var value: Output
     
-    private var subscription: Subscription<Output>?
+    private var subscriptions: [Subscription<Output>] = []
     
     init(_ value: Output) {
         self.value = value
     }
     
     func sink(receiveValue: @escaping (Output) -> Void) {
-        self.subscription = Subscription(receiveValue: receiveValue)
+        self.subscriptions.append(Subscription(receiveValue: receiveValue))
     }
     
     func send(_ value: Output) {
         self.value = value
-        subscription?.receiveValue(value)
+        subscriptions.forEach { $0.receiveValue(value) }
     }
 }

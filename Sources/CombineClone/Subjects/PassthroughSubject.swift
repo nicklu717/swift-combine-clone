@@ -6,13 +6,13 @@
 //
 
 class PassthroughSubject<Output>: Subject {
-    private var subscription: Subscription<Output>?
+    private var subscriptions: [Subscription<Output>] = []
     
     func sink(receiveValue: @escaping (Output) -> Void) {
-        self.subscription = Subscription(receiveValue: receiveValue)
+        self.subscriptions.append(Subscription(receiveValue: receiveValue))
     }
     
     func send(_ value: Output) {
-        subscription?.receiveValue(value)
+        subscriptions.forEach { $0.receiveValue(value) }
     }
 }

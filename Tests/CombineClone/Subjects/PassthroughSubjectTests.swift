@@ -27,4 +27,30 @@ struct PassthroughSubjectTests {
         subject.send(2)
         #expect(output == [1, 2])
     }
+    
+    @Test
+    func multipleSinkAndSend() {
+        var output1: [Int] = []
+        var output2: [Int] = []
+        let subject = PassthroughSubject<Int>()
+        subject.sink { _output in
+            output1.append(_output)
+        }
+        #expect(output1 == [])
+        #expect(output2 == [])
+        
+        subject.send(1)
+        #expect(output1 == [1])
+        #expect(output2 == [])
+        
+        subject.sink { _output in
+            output2.append(_output)
+        }
+        #expect(output1 == [1])
+        #expect(output2 == [])
+        
+        subject.send(2)
+        #expect(output1 == [1, 2])
+        #expect(output2 == [2])
+    }
 }
