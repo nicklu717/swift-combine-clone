@@ -23,10 +23,3 @@ public struct Map<Upstream, Output>: Publisher where Upstream: Publisher {
         )
     }
 }
-
-public extension Publisher {
-    
-    func map<NewOutput>(_ transform: @escaping (Output) -> NewOutput) -> Map<Self, NewOutput> {
-        return Map<Self, NewOutput>(upstream: self, transform: transform)
-    }
-}
