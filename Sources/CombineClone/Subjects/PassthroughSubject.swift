@@ -10,11 +10,11 @@ import Foundation
 class PassthroughSubject<Output>: Subject {
     private var subscriptions: [UUID: Subscription<Output>] = [:]
     
-    func sink(receiveValue: @escaping (Output) -> Void, receiveFinished: @escaping () -> Void) -> Cancellable {
+    func sink(receiveValue: @escaping (Output) -> Void, receiveCompletion: @escaping (Completion) -> Void) -> Cancellable {
         let id = UUID()
         let subscription = Subscription(
             receiveValue: receiveValue,
-            receiveFinished: receiveFinished,
+            receiveCompletion: receiveCompletion,
             receiveCancel: { [weak self] in
                 self?.subscriptions[id] = nil
             }
@@ -29,9 +29,9 @@ class PassthroughSubject<Output>: Subject {
         }
     }
     
-    func sendFinished() {
+    func send(completion: Completion) {
         subscriptions.forEach { _, subscription in
-            subscription.finish()
+            subscription.complete(completion)
         }
         subscriptions.removeAll()
     }

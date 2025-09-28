@@ -7,18 +7,18 @@
 
 class Subscription<Output> {
     private let receiveValue: (Output) -> Void
-    private let receiveFinished: () -> Void
+    private let receiveCompletion: (Completion) -> Void
     private let receiveCancel: () -> Void
     
     private var state: State = .valid
     
     init(
         receiveValue: @escaping (Output) -> Void,
-        receiveFinished: @escaping () -> Void,
+        receiveCompletion: @escaping (Completion) -> Void,
         receiveCancel: @escaping () -> Void
     ) {
         self.receiveValue = receiveValue
-        self.receiveFinished = receiveFinished
+        self.receiveCompletion = receiveCompletion
         self.receiveCancel = receiveCancel
     }
     
@@ -27,10 +27,10 @@ class Subscription<Output> {
         receiveValue(value)
     }
     
-    func finish() {
+    func complete(_ completion: Completion) {
         guard state.isValid else { return }
-        state = .finished
-        receiveFinished()
+        state = .completed
+        receiveCompletion(completion)
     }
 }
 
@@ -38,7 +38,7 @@ class Subscription<Output> {
 extension Subscription {
     
     enum State {
-        case valid, finished, cancelled
+        case valid, completed, cancelled
         
         var isValid: Bool {
             return self == .valid

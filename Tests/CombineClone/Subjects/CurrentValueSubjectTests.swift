@@ -21,7 +21,7 @@ struct CurrentValueSubjectTests {
                 receiveValue: { _output in
                     output.append(_output)
                 },
-                receiveFinished: {}
+                receiveCompletion: { _ in }
             )
         #expect(output == [])
         #expect(subject.value == 0)
@@ -45,7 +45,7 @@ struct CurrentValueSubjectTests {
                 receiveValue: { _output in
                     output1.append(_output)
                 },
-                receiveFinished: {}
+                receiveCompletion: { _ in }
             )
         #expect(output1 == [])
         #expect(output2 == [])
@@ -61,7 +61,7 @@ struct CurrentValueSubjectTests {
                 receiveValue: { _output in
                     output2.append(_output)
                 },
-                receiveFinished: {}
+                receiveCompletion: { _ in }
             )
         #expect(output1 == [1])
         #expect(output2 == [])
@@ -106,7 +106,7 @@ struct CurrentValueSubjectTests {
                 receiveValue: { _output in
                     output.append(_output)
                 },
-                receiveFinished: {}
+                receiveCompletion: { _ in }
             )
         #expect(output == [])
         #expect(subject.value == 0)

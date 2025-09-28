@@ -21,7 +21,7 @@ struct PassthroughSubjectTests {
                 receiveValue: { _output in
                     output.append(_output)
                 },
-                receiveFinished: {}
+                receiveCompletion: { _ in }
             )
         #expect(output == [])
         
@@ -42,7 +42,7 @@ struct PassthroughSubjectTests {
                 receiveValue: { _output in
                     output1.append(_output)
                 },
-                receiveFinished: {}
+                receiveCompletion: { _ in }
             )
         #expect(output1 == [])
         #expect(output2 == [])
@@ -56,7 +56,7 @@ struct PassthroughSubjectTests {
                 receiveValue: { _output in
                     output2.append(_output)
                 },
-                receiveFinished: {}
+                receiveCompletion: { _ in }
             )
         #expect(output1 == [1])
         #expect(output2 == [])
@@ -75,14 +75,14 @@ struct PassthroughSubjectTests {
                 receiveValue: { _output in
                     output.append(_output)
                 },
-                receiveFinished: {}
+                receiveCompletion: { _ in }
             )
         #expect(output == [])
         
         subject.send(1)
         #expect(output == [1])
         
-        subject.sendFinished()
+        subject.send(completion: .finished)
         subject.send(2)
         #expect(output == [1])
     }
@@ -96,7 +96,7 @@ struct PassthroughSubjectTests {
                 receiveValue: { _output in
                     output.append(_output)
                 },
-                receiveFinished: {}
+                receiveCompletion: { _ in }
             )
         #expect(output == [])
         
