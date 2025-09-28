@@ -5,7 +5,7 @@
 //  Created by 陸瑋恩 on 2025/9/27.
 //
 
-public protocol Publisher {
+public protocol Publisher<Output, Failure> {
     associatedtype Output
     associatedtype Failure: Error
     
